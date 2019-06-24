@@ -9,4 +9,4 @@ type Category struct {
 }
 
 // Categories array
-type Categories []Category
+type Categories map[int]Category

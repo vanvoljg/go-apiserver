@@ -18,7 +18,7 @@ func main() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"})
 
 	PORT := os.Getenv("PORT")
-	fmt.Printf("Server Running on %v", PORT)
+	fmt.Printf("Server Running on %v\n", PORT)
 
 	Router := NewRouter()
 

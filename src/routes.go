@@ -2,8 +2,6 @@ package main
 
 import (
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 // Route struct
@@ -16,21 +14,6 @@ type Route struct {
 
 // Routes array
 type Routes []Route
-
-// NewRouter returns a new router
-func NewRouter() *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-
-	for _, route := range routes {
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(route.HandlerFunc)
-	}
-
-	return router
-}
 
 var routes = Routes{
 	Route{
@@ -46,9 +29,15 @@ var routes = Routes{
 		CategoriesHandler,
 	},
 	Route{
-		"OneCategory",
-		"GET",
-		"/categories/{ID}",
-		OneCategoryHandler,
+		"CreateCategory",
+		"POST",
+		"/categories",
+		CategoriesCreate,
 	},
+	// Route{
+	// 	"OneCategory",
+	// 	"GET",
+	// 	"/categories/{ID}",
+	// 	OneCategoryHandler,
+	// },
 }

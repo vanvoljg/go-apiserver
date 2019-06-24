@@ -10,4 +10,4 @@ type Product struct {
 }
 
 // Products array
-type Products []Product
+type Products map[int]Product
