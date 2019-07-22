@@ -2,11 +2,11 @@ package main
 
 // Product schema
 type Product struct {
-	id          int    `json:"_id"`
-	category    string `json:"category"`
-	name        string `json:"name"`
-	displayName string `json:"display_name"`
-	description string `json:"description"`
+	Id          int    `json:"_id"`
+	Category    string `json:"category"`
+	Name        string `json:"name"`
+	DisplayName string `json:"display_name"`
+	Description string `json:"description"`
 }
 
 // Products array

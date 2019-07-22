@@ -2,6 +2,9 @@
 # Created by https://www.gitignore.io/api/go,vim,node,kate,linux,macos,windows,webstorm
 # Edit at https://www.gitignore.io/?templates=go,vim,node,kate,linux,macos,windows,webstorm
 
+# GoLand
+.idea
+
 ### Go ###
 # Binaries for programs and plugins
 *.exe
