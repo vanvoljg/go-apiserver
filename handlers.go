@@ -16,6 +16,8 @@ func CategoriesHandler(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set(contentType, applicationJson)
 	response.WriteHeader(http.StatusOK)
 
+	categories := DatabaseGetCategories()
+
 	if err := json.NewEncoder(response).Encode(categories); err != nil {
 		panic(err)
 	}
@@ -24,7 +26,7 @@ func CategoriesHandler(response http.ResponseWriter, request *http.Request) {
 func CategoriesCreate(response http.ResponseWriter, request *http.Request) {
 
 	var category Category
-	messageLimit := int64(1024 * 1024)
+	messageLimit := int64(1024 * 1024) // 1024 KiB is a reasonable message size
 
 	requestBody, err := ioutil.ReadAll(io.LimitReader(request.Body, messageLimit))
 	if err != nil {
@@ -34,6 +36,7 @@ func CategoriesCreate(response http.ResponseWriter, request *http.Request) {
 	if err := request.Body.Close(); err != nil {
 		panic(err)
 	}
+
 	// Unmarshal takes a JSON string and parses it into the category created above
 	if err := json.Unmarshal(requestBody, &category); err != nil {
 		response.Header().Set(contentType, applicationJson)
@@ -50,9 +53,4 @@ func CategoriesCreate(response http.ResponseWriter, request *http.Request) {
 	if err := json.NewEncoder(response).Encode(newCategory); err != nil {
 		panic(err)
 	}
-}
-
-// Hello World
-func Hello(response http.ResponseWriter, request *http.Request) {
-	json.NewEncoder(response).Encode("Hello World")
 }

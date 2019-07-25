@@ -17,12 +17,6 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
-		"Index",
-		"GET",
-		"/",
-		Hello,
-	},
-	Route{
 		"Categories",
 		"GET",
 		"/categories",
@@ -37,7 +31,7 @@ var routes = Routes{
 	// Route{
 	// 	"OneCategory",
 	// 	"GET",
-	// 	"/categories/{ID}",
+	// 	"/categories/{Id}",
 	// 	OneCategoryHandler,
 	// },
 }

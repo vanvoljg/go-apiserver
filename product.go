@@ -9,5 +9,5 @@ type Product struct {
 	Description string `json:"description"`
 }
 
-// Products array
-type Products map[int]Product
+// // Products array
+// type Products map[int]Product
