@@ -26,6 +26,7 @@ func main() {
 	Router := NewRouter()
 
 	StartDatabase()
+	defer Database.Close()
 
 	fmt.Printf("Server Running on %v\n", port)
 	log.Fatal(http.ListenAndServe(url, handlers.CORS(originsOk, headersOk, methodsOk)(Router)))

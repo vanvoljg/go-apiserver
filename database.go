@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 )
-import "github.com/go-pg/pg/orm"
-import "github.com/go-pg/pg"
+import "github.com/go-pg/pg/v9/orm"
+import "github.com/go-pg/pg/v9"
 
 var Database *pg.DB
 
@@ -14,7 +14,6 @@ func StartDatabase() {
 	databaseUrl := os.Getenv("DATABASE_URL")
 
 	options, err := pg.ParseURL(databaseUrl)
-	fmt.Print(options, err)
 	if err != nil {
 		panic(err)
 	}

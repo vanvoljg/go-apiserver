@@ -13,10 +13,10 @@ const applicationJson = "application/json; charset=UTF-8"
 // CategoriesHandler sends JSON of categories
 func CategoriesHandler(response http.ResponseWriter, request *http.Request) {
 
+	categories := DatabaseGetCategories()
+
 	response.Header().Set(contentType, applicationJson)
 	response.WriteHeader(http.StatusOK)
-
-	categories := DatabaseGetCategories()
 
 	if err := json.NewEncoder(response).Encode(categories); err != nil {
 		panic(err)
