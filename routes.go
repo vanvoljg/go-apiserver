@@ -26,7 +26,7 @@ var routes = Routes{
 		"CreateCategory",
 		"POST",
 		"/categories",
-		CategoriesCreate,
+		CategoryCreate,
 	},
 	// Route{
 	// 	"OneCategory",
@@ -34,4 +34,10 @@ var routes = Routes{
 	// 	"/categories/{Id}",
 	// 	OneCategoryHandler,
 	// },
+	Route{
+		"InitializeDatabase",
+		"GET",
+		"/database/initialize",
+		DatabaseInit,
+	},
 }

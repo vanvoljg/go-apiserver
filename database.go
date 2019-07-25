@@ -2,77 +2,66 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"os"
+
+	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v9/orm"
 )
-import "github.com/go-pg/pg/v9/orm"
-import "github.com/go-pg/pg/v9"
 
-var Database *pg.DB
+var database *pg.DB
 
-func StartDatabase() {
+func StartDatabaseConnection() {
 
 	databaseUrl := os.Getenv("DATABASE_URL")
 
 	options, err := pg.ParseURL(databaseUrl)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	Database = pg.Connect(options)
+	database = pg.Connect(options)
+}
 
-	err = createSchema(Database)
-	if err != nil {
-		panic(err)
+func CloseDatabaseConnection() {
+	if err := database.Close(); err != nil {
+		log.Fatal(err)
 	}
 }
 
-func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{(*Category)(nil), (*Product)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
-			Temp: true,
-		})
-		if err != nil {
-			return err
-		}
+func DatabaseInit(response http.ResponseWriter, request *http.Request) {
+	if err := createSchema(database); err != nil {
+		log.Fatal(err)
 	}
-	return nil
+
+	if _, err := io.WriteString(response, "Database Initialized"); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := request.Body.Close(); err != nil {
+		log.Fatal(err)
+	}
 }
-
-// var currentID int
-
-// var categories = make(Categories)
-// var products = make(Products)
-
-// func init() {
-// 	DatabaseCategoryCreate(Category{
-// 		Name:        "test1",
-// 		DisplayName: "Test Category 1",
-// 		Description: "Description 1",
-// 	})
-// 	DatabaseCategoryCreate(Category{
-// 		Name:        "test2",
-// 		DisplayName: "Test Category 2",
-// 		Description: "Description 2",
-// 	})
-// }
 
 func DatabaseGetCategories() []Category {
 	var categories []Category
 
-	err := Database.Model(&categories).Select()
+	err := database.Model(&categories).Select()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	return categories
 }
 
 func DatabaseCategoryCreate(newCategory Category) Category {
-	inserted, err := Database.Model(newCategory).Returning("*").Insert()
+	inserted, err := database.Model(&newCategory).Returning("*").Insert()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	fmt.Print(inserted)
+	fmt.Println(inserted)
 	return newCategory
 }
 
@@ -89,3 +78,11 @@ func DatabaseCategoryCreate(newCategory Category) Category {
 // 	delete(categories, id)
 // 	return nil
 // }
+func createSchema(db *pg.DB) error {
+	for _, model := range []interface{}{(*Category)(nil), (*Product)(nil)} {
+		if err := db.CreateTable(model, &orm.CreateTableOptions{}); err != nil {
+			return err
+		}
+	}
+	return nil
+}

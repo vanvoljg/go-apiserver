@@ -2,7 +2,7 @@ package main
 
 // Product schema
 type Product struct {
-	Id          int    `json:"_id"`
+	Id          int    `json:"id"`
 	Category    string `json:"category"`
 	Name        string `json:"name"`
 	DisplayName string `json:"display_name"`

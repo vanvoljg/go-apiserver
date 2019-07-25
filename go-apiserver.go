@@ -11,8 +11,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -25,8 +24,8 @@ func main() {
 
 	Router := NewRouter()
 
-	StartDatabase()
-	defer Database.Close()
+	StartDatabaseConnection()
+	defer CloseDatabaseConnection()
 
 	fmt.Printf("Server Running on %v\n", port)
 	log.Fatal(http.ListenAndServe(url, handlers.CORS(originsOk, headersOk, methodsOk)(Router)))
