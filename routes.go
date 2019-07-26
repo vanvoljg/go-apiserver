@@ -17,25 +17,31 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
-		"Categories",
+		"GetAllCategories",
 		"GET",
 		"/categories",
-		CategoriesHandler,
+		GetAllCategories,
 	},
 	Route{
 		"CreateCategory",
 		"POST",
 		"/categories",
-		CategoryCreate,
+		CreateCategory,
 	},
-	// Route{
-	// 	"OneCategory",
-	// 	"GET",
-	// 	"/categories/{Id}",
-	// 	OneCategoryHandler,
-	// },
 	Route{
-		"InitializeDatabase",
+		"GetOneCategory",
+		"GET",
+		"/categories/{id}",
+		GetOneCategory,
+	},
+	Route{
+		"DeleteCategory",
+		"DELETE",
+		"/categories/{id}",
+		DeleteCategory,
+	},
+	Route{
+		"DatabaseInit",
 		"GET",
 		"/database/initialize",
 		DatabaseInit,

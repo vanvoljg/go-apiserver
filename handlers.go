@@ -6,6 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -13,32 +16,49 @@ const (
 	applicationJson = "application/json; charset=UTF-8"
 )
 
-// CategoriesHandler sends JSON of categories
-func CategoriesHandler(response http.ResponseWriter, request *http.Request) {
+// GetAllCategories sends JSON of categories
+func GetAllCategories(writer http.ResponseWriter, request *http.Request) {
 
-	categories := DatabaseGetCategories()
-	result := {
-		"Results": []Category,
+	results := DatabaseGetCategories()
+
+	categories := map[string][]Category{
+		"categories": results,
 	}
 
-	if len(categories) == 0 {
+	writer.Header().Set(contentType, applicationJson)
+	writer.WriteHeader(http.StatusOK)
 
-	}
-
-	response.Header().Set(contentType, applicationJson)
-	response.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(response).Encode(categories); err != nil {
+	if err := json.NewEncoder(writer).Encode(categories); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func CategoryCreate(response http.ResponseWriter, request *http.Request) {
+func GetOneCategory(writer http.ResponseWriter, request *http.Request) {
+
+	idString := mux.Vars(request)["id"]
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	result := DatabaseGetOneCategory(id)
+
+	writer.Header().Set(contentType, applicationJson)
+	writer.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(writer).Encode(result); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func CreateCategory(writer http.ResponseWriter, request *http.Request) {
 
 	var category Category
+
+	// Parse json encoded request body
 	// messageLimit needs to be set, so use something reasonable
 	messageLimit := int64(1024 * 1024) // 1024 KiB is a reasonable message size
-
 	requestBody, err := ioutil.ReadAll(io.LimitReader(request.Body, messageLimit))
 	if err != nil {
 		log.Fatal(err)
@@ -50,18 +70,39 @@ func CategoryCreate(response http.ResponseWriter, request *http.Request) {
 
 	// Unmarshal takes a JSON string and parses it into the category created above
 	if err := json.Unmarshal(requestBody, &category); err != nil {
-		response.Header().Set(contentType, applicationJson)
-		response.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(response).Encode(err); err != nil {
+		writer.Header().Set(contentType, applicationJson)
+		writer.WriteHeader(http.StatusUnprocessableEntity)
+		if err := json.NewEncoder(writer).Encode(err); err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	newCategory := DatabaseCategoryCreate(category)
 
-	response.Header().Set(contentType, applicationJson)
-	response.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(response).Encode(newCategory); err != nil {
+	writer.Header().Set(contentType, applicationJson)
+	writer.WriteHeader(http.StatusCreated)
+
+	if err := json.NewEncoder(writer).Encode(newCategory); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func DeleteCategory(writer http.ResponseWriter, request *http.Request) {
+
+	idString := mux.Vars(request)["id"]
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	deletedCategory := DatabaseDeleteCategory(id)
+
+	writer.Header().Set(contentType, applicationJson)
+	writer.WriteHeader(http.StatusCreated)
+
+	if err := json.NewEncoder(writer).Encode(deletedCategory); err != nil {
+		log.Fatal(err)
+	}
+
 }

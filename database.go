@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -31,6 +30,48 @@ func CloseDatabaseConnection() {
 	}
 }
 
+func DatabaseGetCategories() []Category {
+	var categories []Category
+
+	if err := database.Model(&categories).Select(); err != nil {
+		log.Fatal(err)
+	}
+
+	return categories
+}
+
+func DatabaseGetOneCategory(id int) Category {
+	foundCategory := Category{Id: id}
+
+	if err := database.Select(&foundCategory); err != nil {
+		log.Fatal(err)
+	}
+
+	return foundCategory
+}
+
+func DatabaseCategoryCreate(newCategory Category) Category {
+
+	_, err := database.Model(&newCategory).Returning("*").Insert()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return newCategory
+}
+
+func DatabaseDeleteCategory(id int) Category {
+
+	deletedCategory := Category{Id: id}
+
+	if _, err := database.Model(&deletedCategory).WherePK().Returning("*").Delete(); err != nil {
+		panic(err)
+	}
+
+	return deletedCategory
+}
+
 func DatabaseInit(response http.ResponseWriter, request *http.Request) {
 	if err := createSchema(database); err != nil {
 		log.Fatal(err)
@@ -45,39 +86,6 @@ func DatabaseInit(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func DatabaseGetCategories() []Category {
-	var categories []Category
-
-	err := database.Model(&categories).Select()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return categories
-}
-
-func DatabaseCategoryCreate(newCategory Category) Category {
-	inserted, err := database.Model(&newCategory).Returning("*").Insert()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(inserted)
-	return newCategory
-}
-
-//
-// func DatabaseCategoryFindOne(id int) Category {
-// 	return categories[id]
-// }
-//
-// func DatabaseCategoryFindAndDelete(id int) error {
-// 	category := DatabaseCategoryFindOne(id)
-// 	if category.Id != id {
-// 		return fmt.Errorf("Could not find category with id %d to delete", id)
-// 	}
-// 	delete(categories, id)
-// 	return nil
-// }
 func createSchema(db *pg.DB) error {
 	for _, model := range []interface{}{(*Category)(nil), (*Product)(nil)} {
 		if err := db.CreateTable(model, &orm.CreateTableOptions{}); err != nil {
