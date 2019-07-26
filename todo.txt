@@ -1,4 +1,0 @@
-todo in server:
-- write middleware!
-- json parser
-- urlencoded parser
