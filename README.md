@@ -12,13 +12,13 @@
 - Endpoint: `/categories`
   - `GET`: Returns a JSON object with a list of categories
   - `POST`: Add a category to the database. Send a request body, encoded as `application/json`, of the form:
-```
-{
-  name: "name",
-  display_name: "display name",
-  description: "description"
-}
-```
+    ```
+    {
+      name: "name",
+      display_name: "display name",
+      description: "description"
+    }
+    ```
     Return value will be the added category, with id, as a JSON object.
 - Endpoint: `/categories/:id`
   - `GET`: Returns a JSON object with the category requested by the given id
